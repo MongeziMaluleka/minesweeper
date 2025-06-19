@@ -14,7 +14,7 @@
 
 </head>
 <body>
-  <!-- where our React app will be mounted -->
+  <!-- Where React app will be mounted -->
   <div id="root"></div>
 
   <script type="text/babel">
@@ -22,10 +22,10 @@
     // MINESWEEPER GAME
     // ========================================
 
-    // React uses a concept called "hooks" to manage state and side effects
+    // React uses "hooks" to manage state and side effects
     // use the useState and useEffect hooks in this app
 
-    // Game settings - start with a small board for beginners
+    // Game settings - starting with a small board for beginners
     const GAME_CONFIG = {
       rows: 8,
       cols: 8,
@@ -36,7 +36,7 @@
     // CELL COMPONENT
     // ========================================
 
-    // This component represents a single cell on the board
+    // Represents a single cell on the board
     function Cell(props) {
       // Props explanation:
       // - value: what's in the cell (-1 = mine, 0 = empty, 1-8 = number of adjacent mines)
@@ -92,10 +92,10 @@
       // STATE VARIABLES
       // ========================================
 
-      // useState is a React hook that lets us add state to our component
-      // The first value is the current state, and the second is a function to update it
+      // useState - React hook that lets you add state to component
+      // first value is the current state, and the second is a function to update it
 
-      // The game board - a 2D array of cell objects
+      // Game board - 2D array of cell objects
       const [board, setBoard] = React.useState([]);
 
       // Game status: "playing", "won", or "lost"
@@ -241,7 +241,7 @@
         }
 
         // If not a mine, reveal the cell
-        // We use a separate function for this because it might need to reveal multiple cells
+        // Used a separate function for this because it might need to reveal multiple cells
         const updatedBoard = revealCell(newBoard, row, col);
         setBoard(updatedBoard);
 
@@ -346,8 +346,8 @@
       // EFFECTS
       // ========================================
 
-      // useEffect is a React hook that lets us perform side effects
-      // This one runs once when the component first mounts
+      // useEffect - React hook that lets us perform side effects
+      // Runs once when the component first mounts
       React.useEffect(() => {
         // Start a new game when the component mounts
         startNewGame();
@@ -444,7 +444,7 @@
       );
     }
 
-    // Mount our React app to the DOM
+    // Mount React app to the DOM
     ReactDOM.render(<MinesweeperGame />, document.getElementById("root"));
   </script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9511076a1492da14',t:'MTc1MDE0NzM5MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
