@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Beginner Minesweeper</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beginner Minesweeper</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
 </head>
 <body>
-  <!-- Where React app will be mounted -->
-  <div id="root"></div>
+<!-- Where React app will be mounted -->
+<div id="root"></div>
 
-  <script type="text/babel">
+<script type="text/babel">
     // ========================================
     // MINESWEEPER GAME
     // ========================================
@@ -27,9 +27,9 @@
 
     // Game settings - starting with a small board for beginners
     const GAME_CONFIG = {
-      rows: 8,
-      cols: 8,
-      mines: 8
+        rows: 8,
+        cols: 8,
+        mines: 8
     };
 
     // ========================================
@@ -38,49 +38,49 @@
 
     // Represents a single cell on the board
     function Cell(props) {
-      // Props explanation:
-      // - value: what's in the cell (-1 = mine, 0 = empty, 1-8 = number of adjacent mines)
-      // - isRevealed: whether the cell has been clicked
-      // - isFlagged: whether the cell has been flagged
-      // - onClick: function to call when cell is clicked
-      // - onRightClick: function to call when cell is right-clicked
+        // Props explanation:
+        // - value: what's in the cell (-1 = mine, 0 = empty, 1-8 = number of adjacent mines)
+        // - isRevealed: whether the cell has been clicked
+        // - isFlagged: whether the cell has been flagged
+        // - onClick: function to call when cell is clicked
+        // - onRightClick: function to call when cell is right-clicked
 
-      // Determine what to display in the cell
-      let cellContent = "";
-      let cellStyle = "game-cell border ";
+        // Determine what to display in the cell
+        let cellContent = "";
+        let cellStyle = "game-cell border ";
 
-      if (props.isFlagged) {
-        // If flagged, show a flag emoji
-        cellContent = "🚩";
-        cellStyle += "bg-gray-200";
-      } else if (!props.isRevealed) {
-        // If not revealed, show a covered cell
-        cellStyle += "bg-blue-200 hover:bg-blue-300";
-      } else {
-        // If revealed, show what's inside
-        cellStyle += "bg-white";
+        if (props.isFlagged) {
+            // If flagged, show a flag emoji
+            cellContent = "🚩";
+            cellStyle += "bg-gray-200";
+        } else if (!props.isRevealed) {
+            // If not revealed, show a covered cell
+            cellStyle += "bg-blue-200 hover:bg-blue-300";
+        } else {
+            // If revealed, show what's inside
+            cellStyle += "bg-white";
 
-        if (props.value === -1) {
-          // It's a mine!
-          cellContent = "💣";
-        } else if (props.value > 0) {
-          // It's a number
-          cellContent = props.value;
-          cellStyle += ` number-${props.value}`;
+            if (props.value === -1) {
+                // It's a mine!
+                cellContent = "💣";
+            } else if (props.value > 0) {
+                // It's a number
+                cellContent = props.value;
+                cellStyle += ` number-${props.value}`;
+            }
+            // If value is 0, we leave it empty
         }
-        // If value is 0, we leave it empty
-      }
 
-      // The cell component returns a div with the appropriate content and styling
-      return (
-        <div
-          className={cellStyle}
-          onClick={props.onClick}
-          onContextMenu={props.onRightClick}
-        >
-          {cellContent}
-        </div>
-      );
+        // The cell component returns a div with the appropriate content and styling
+        return (
+            <div
+                className={cellStyle}
+                onClick={props.onClick}
+                onContextMenu={props.onRightClick}
+            >
+                {cellContent}
+            </div>
+        );
     }
 
     // ========================================
@@ -88,364 +88,388 @@
     // ========================================
 
     function MinesweeperGame() {
-      // ========================================
-      // STATE VARIABLES
-      // ========================================
+        // ========================================
+        // STATE VARIABLES
+        // ========================================
 
-      // useState - React hook that lets you add state to component
-      // first value is the current state, and the second is a function to update it
+        // useState - React hook that lets you add state to component
+        // first value is the current state, and the second is a function to update it
 
-      // Game board - 2D array of cell objects
-      const [board, setBoard] = React.useState([]);
+        // Game board - 2D array of cell objects
+        const [board, setBoard] = React.useState([]);
 
-      // Game status: "playing", "won", or "lost"
-      const [gameStatus, setGameStatus] = React.useState("playing");
+        // Game status: "playing", "won", or "lost"
+        const [gameStatus, setGameStatus] = React.useState("playing");
 
-      // Number of mines left to flag
-      const [minesLeft, setMinesLeft] = React.useState(GAME_CONFIG.mines);
+        // Number of mines left to flag
+        const [minesLeft, setMinesLeft] = React.useState(GAME_CONFIG.mines);
 
-      // Timer to track game duration
-      const [timer, setTimer] = React.useState(0);
+        // Timer to track game duration
+        const [timer, setTimer] = React.useState(0);
 
-      // Reference to the timer interval (needed to clear it later)
-      const [timerInterval, setTimerInterval] = React.useState(null);
+        // Reference to the timer interval (needed to clear it later)
+        const timerIntervalRef = React.useRef(null);
 
-      // ========================================
-      // GAME INITIALIZATION
-      // ========================================
+        // Track if game has started (first click)
+        const [gameStarted, setGameStarted] = React.useState(false);
 
-      // This function creates a new game board with randomly placed mines
-      function createNewBoard() {
-        // Step 1: Create an empty board filled with cell objects
-        const newBoard = [];
 
-        for (let row = 0; row < GAME_CONFIG.rows; row++) {
-          const newRow = [];
-          for (let col = 0; col < GAME_CONFIG.cols; col++) {
-            // Each cell is an object with these properties
-            newRow.push({
-              row: row,
-              col: col,
-              value: 0,         // 0 = empty, 1-8 = number of adjacent mines, -1 = mine
-              isRevealed: false,
-              isFlagged: false
-            });
-          }
-          newBoard.push(newRow);
+        // ========================================
+        // GAME INITIALIZATION
+        // ========================================
+
+        // This function creates a new game board with randomly placed mines
+        function createNewBoard() {
+            // Step 1: Create an empty board filled with cell objects
+            const newBoard = [];
+
+            for (let row = 0; row < GAME_CONFIG.rows; row++) {
+                const newRow = [];
+                for (let col = 0; col < GAME_CONFIG.cols; col++) {
+                    // Each cell is an object with these properties
+                    newRow.push({
+                        row: row,
+                        col: col,
+                        value: 0,         // 0 = empty, 1-8 = number of adjacent mines, -1 = mine
+                        isRevealed: false,
+                        isFlagged: false
+                    });
+                }
+                newBoard.push(newRow);
+            }
+
+            // Step 2: Place mines randomly on the board
+            let minesPlaced = 0;
+            while (minesPlaced < GAME_CONFIG.mines) {
+                // Generate random row and column
+                const randomRow = Math.floor(Math.random() * GAME_CONFIG.rows);
+                const randomCol = Math.floor(Math.random() * GAME_CONFIG.cols);
+
+                // Only place a mine if there isn't one already there
+                if (newBoard[randomRow][randomCol].value !== -1) {
+                    // Set the cell value to -1 to represent a mine
+                    newBoard[randomRow][randomCol].value = -1;
+                    minesPlaced++;
+
+                    // Step 3: Update the numbers in adjacent cells
+                    // We need to increment the value of all adjacent cells
+                    updateAdjacentCells(newBoard, randomRow, randomCol);
+                }
+            }
+
+            return newBoard;
         }
 
-        // Step 2: Place mines randomly on the board
-        let minesPlaced = 0;
-        while (minesPlaced < GAME_CONFIG.mines) {
-          // Generate random row and column
-          const randomRow = Math.floor(Math.random() * GAME_CONFIG.rows);
-          const randomCol = Math.floor(Math.random() * GAME_CONFIG.cols);
+        // Helper function to update the numbers in cells adjacent to a mine
+        function updateAdjacentCells(board, row, col) {
+            // Check all 8 surrounding cells
+            for (let r = Math.max(0, row - 1); r <= Math.min(GAME_CONFIG.rows - 1, row + 1); r++) {
+                for (let c = Math.max(0, col - 1); c <= Math.min(GAME_CONFIG.cols - 1, col + 1); c++) {
+                    // Skip the mine cell itself
+                    if (r === row && c === col) continue;
 
-          // Only place a mine if there isn't one already there
-          if (newBoard[randomRow][randomCol].value !== -1) {
-            // Set the cell value to -1 to represent a mine
-            newBoard[randomRow][randomCol].value = -1;
-            minesPlaced++;
+                    // Skip if the adjacent cell is also a mine
+                    if (board[r][c].value === -1) continue;
 
-            // Step 3: Update the numbers in adjacent cells
-            // We need to increment the value of all adjacent cells
-            updateAdjacentCells(newBoard, randomRow, randomCol);
-          }
-        }
-
-        return newBoard;
-      }
-
-      // Helper function to update the numbers in cells adjacent to a mine
-      function updateAdjacentCells(board, row, col) {
-        // Check all 8 surrounding cells
-        for (let r = Math.max(0, row - 1); r <= Math.min(GAME_CONFIG.rows - 1, row + 1); r++) {
-          for (let c = Math.max(0, col - 1); c <= Math.min(GAME_CONFIG.cols - 1, col + 1); c++) {
-            // Skip the mine cell itself
-            if (r === row && c === col) continue;
-
-            // Skip if the adjacent cell is also a mine
-            if (board[r][c].value === -1) continue;
-
-            // Increment the adjacent cell's value
-            board[r][c].value += 1;
-          }
-        }
-      }
-
-      // Function to start a new game
-      function startNewGame() {
-        // Create a new board
-        const newBoard = createNewBoard();
-
-        // Reset all game state
-        setBoard(newBoard);
-        setGameStatus("playing");
-        setMinesLeft(GAME_CONFIG.mines);
-        setTimer(0);
-
-        // Clear any existing timer
-        if (timerInterval) {
-          clearInterval(timerInterval);
+                    // Increment the adjacent cell's value
+                    board[r][c].value += 1;
+                }
+            }
         }
 
         // Start a new timer that updates every second
-        const interval = setInterval(() => {
-          setTimer(prevTime => prevTime + 1);
-        }, 1000);
-
-        setTimerInterval(interval);
-      }
-
-      // ========================================
-      // GAME LOGIC
-      // ========================================
-
-      // Function to handle revealing a cell (left click)
-      function handleCellClick(row, col) {
-        // Do nothing if game is over or cell is flagged
-        if (gameStatus !== "playing" || board[row][col].isFlagged) {
-          return;
-        }
-
-        // Create a copy of the board (React state should be immutable)
-        const newBoard = JSON.parse(JSON.stringify(board));
-
-        // If clicked on a mine, game over!
-        if (newBoard[row][col].value === -1) {
-          // Reveal the mine that was clicked
-          newBoard[row][col].isRevealed = true;
-          setBoard(newBoard);
-
-          // End the game
-          setGameStatus("lost");
-          clearInterval(timerInterval);
-
-          // After a short delay, reveal all mines
-          setTimeout(() => {
-            const finalBoard = JSON.parse(JSON.stringify(newBoard));
-
-            // Reveal all mines
-            for (let r = 0; r < GAME_CONFIG.rows; r++) {
-              for (let c = 0; c < GAME_CONFIG.cols; c++) {
-                if (finalBoard[r][c].value === -1) {
-                  finalBoard[r][c].isRevealed = true;
+        function startTimer() {
+            if (!gameStarted) {
+                setGameStarted(true);
+                // Clear any existing timer first
+                if (timerIntervalRef.current) {
+                    clearInterval(timerIntervalRef.current);
                 }
-              }
+                // Start new timer
+                timerIntervalRef.current = setInterval(() => {
+                    setTimer(prevTime => prevTime + 1);
+                }, 1000);
+            }
+        }
+
+        // Function to start a new game
+        function startNewGame() {
+            // Create a new board
+            const newBoard = createNewBoard();
+
+            // Reset all game state
+            setBoard(newBoard);
+            setGameStatus("playing");
+            setMinesLeft(GAME_CONFIG.mines);
+            setTimer(0);
+            setGameStarted(false);
+
+            // Clear any existing timer
+            if (timerIntervalRef.current) {
+                clearInterval(timerIntervalRef.current);
+                timerIntervalRef.current = null;
+            }
+        }
+
+        // ========================================
+        // GAME LOGIC
+        // ========================================
+
+        // Function to handle revealing a cell (left click)
+        function handleCellClick(row, col) {
+            // Start timer on first click if not already started
+            if (!gameStarted) {
+                startTimer();
             }
 
-            setBoard(finalBoard);
-          }, 500);
-
-          return;
-        }
-
-        // If not a mine, reveal the cell
-        // Used a separate function for this because it might need to reveal multiple cells
-        const updatedBoard = revealCell(newBoard, row, col);
-        setBoard(updatedBoard);
-
-        // Check if the game is won
-        if (checkWinCondition(updatedBoard)) {
-          setGameStatus("won");
-          clearInterval(timerInterval);
-        }
-      }
-
-      // Function to handle flagging a cell (right click)
-      function handleCellRightClick(row, col, event) {
-        // Prevent the context menu from appearing
-        event.preventDefault();
-
-        // Do nothing if game is over or cell is already revealed
-        if (gameStatus !== "playing" || board[row][col].isRevealed) {
-          return;
-        }
-
-        // Create a copy of the board
-        const newBoard = JSON.parse(JSON.stringify(board));
-
-        // Toggle the flag status
-        newBoard[row][col].isFlagged = !newBoard[row][col].isFlagged;
-
-        // Update the board
-        setBoard(newBoard);
-
-        // Update mines left counter
-        if (newBoard[row][col].isFlagged) {
-          setMinesLeft(minesLeft - 1);
-        } else {
-          setMinesLeft(minesLeft + 1);
-        }
-      }
-
-      // Function to reveal a cell and potentially its neighbors
-      function revealCell(board, row, col) {
-        // Boundary check
-        if (row < 0 || row >= GAME_CONFIG.rows || col < 0 || col >= GAME_CONFIG.cols) {
-          return board;
-        }
-
-        // Do nothing if cell is already revealed or flagged
-        if (board[row][col].isRevealed || board[row][col].isFlagged) {
-          return board;
-        }
-
-        // Reveal the cell
-        board[row][col].isRevealed = true;
-
-        // If it's an empty cell (value 0), reveal all adjacent cells too
-        // This is the "flood fill" algorithm that makes empty areas clear automatically
-        if (board[row][col].value === 0) {
-          // Check all 8 surrounding cells
-          for (let r = row - 1; r <= row + 1; r++) {
-            for (let c = col - 1; c <= col + 1; c++) {
-              // Skip the current cell
-              if (r === row && c === col) continue;
-
-              // Recursively reveal adjacent cells
-              board = revealCell(board, r, c);
+            // Do nothing if game is over or cell is flagged
+            if (gameStatus !== "playing" || board[row][col].isFlagged) {
+                return;
             }
-          }
-        }
 
-        return board;
-      }
+            // Create a copy of the board (React state should be immutable)
+            const newBoard = JSON.parse(JSON.stringify(board));
 
-      // Function to check if the game is won
-      function checkWinCondition(board) {
-        // Game is won when all non-mine cells are revealed
-        for (let row = 0; row < GAME_CONFIG.rows; row++) {
-          for (let col = 0; col < GAME_CONFIG.cols; col++) {
-            const cell = board[row][col];
+            // If clicked on a mine, game over!
+            if (newBoard[row][col].value === -1) {
+                // Reveal the mine that was clicked
+                newBoard[row][col].isRevealed = true;
+                setBoard(newBoard);
 
-            // If a non-mine cell is still hidden, game is not won yet
-            if (cell.value !== -1 && !cell.isRevealed) {
-              return false;
+                // End the game
+                setGameStatus("lost");
+                if (timerIntervalRef.current) {
+                    clearInterval(timerIntervalRef.current);
+                }
+
+                // After a short delay, reveal all mines
+                setTimeout(() => {
+                    const finalBoard = JSON.parse(JSON.stringify(newBoard));
+
+                    // Reveal all mines
+                    for (let r = 0; r < GAME_CONFIG.rows; r++) {
+                        for (let c = 0; c < GAME_CONFIG.cols; c++) {
+                            if (finalBoard[r][c].value === -1) {
+                                finalBoard[r][c].isRevealed = true;
+                            }
+                        }
+                    }
+
+                    setBoard(finalBoard);
+                }, 500);
+
+                return;
             }
-          }
+
+            // If not a mine, reveal the cell
+            // Used a separate function for this because it might need to reveal multiple cells
+            const updatedBoard = revealCell(newBoard, row, col);
+            setBoard(updatedBoard);
+
+            // Check if the game is won
+            if (checkWinCondition(updatedBoard)) {
+                setGameStatus("won");
+                if (timerIntervalRef.current) {
+                    clearInterval(timerIntervalRef.current);
+                }
+            }
         }
 
-        // All non-mine cells are revealed, so the game is won!
-        return true;
-      }
+        // Function to handle flagging a cell (right click)
+        function handleCellRightClick(row, col, event) {
+            // Prevent the context menu from appearing
+            event.preventDefault();
 
-      // Format the timer display as MM:SS
-      function formatTime(seconds) {
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
+            // Do nothing if game is over or cell is already revealed
+            if (gameStatus !== "playing" || board[row][col].isRevealed) {
+                return;
+            }
 
-        // Add leading zeros if needed
-        const formattedMinutes = String(minutes).padStart(2, '0');
-        const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+            // Create a copy of the board
+            const newBoard = JSON.parse(JSON.stringify(board));
 
-        return `${formattedMinutes}:${formattedSeconds}`;
-      }
+            // Toggle the flag status
+            newBoard[row][col].isFlagged = !newBoard[row][col].isFlagged;
 
-      // ========================================
-      // EFFECTS
-      // ========================================
+            // Update the board
+            setBoard(newBoard);
 
-      // useEffect - React hook that lets us perform side effects
-      // Runs once when the component first mounts
-      React.useEffect(() => {
-        // Start a new game when the component mounts
-        startNewGame();
+            // Update mines left counter
+            if (newBoard[row][col].isFlagged) {
+                setMinesLeft(minesLeft - 1);
+            } else {
+                setMinesLeft(minesLeft + 1);
+            }
+        }
 
-        // Clean up function that runs when component unmounts
-        return () => {
-          // Clear the timer to prevent memory leaks
-          if (timerInterval) {
-            clearInterval(timerInterval);
-          }
-        };
-      }, []); // Empty dependency array means this runs once on mount
+        // Function to reveal a cell and potentially its neighbors
+        function revealCell(board, row, col) {
+            // Boundary check
+            if (row < 0 || row >= GAME_CONFIG.rows || col < 0 || col >= GAME_CONFIG.cols) {
+                return board;
+            }
 
-      // ========================================
-      // RENDER THE GAME
-      // ========================================
+            // Do nothing if cell is already revealed or flagged
+            if (board[row][col].isRevealed || board[row][col].isFlagged) {
+                return board;
+            }
 
-      return (
-        <div className="flex flex-col items-center justify-center min-h-screen p-4">
-          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md">
-            {/* Game title */}
-            <h1 className="text-3xl font-bold text-center mb-4 text-blue-600">Beginner Minesweeper</h1>
+            // Reveal the cell
+            board[row][col].isRevealed = true;
 
-            {/* Game controls */}
-            <div className="flex justify-between items-center mb-4">
-              {/* Mine counter */}
-              <div className="bg-gray-100 px-3 py-2 rounded">
-                <span className="font-bold">🚩 {minesLeft}</span>
-              </div>
+            // If it's an empty cell (value 0), reveal all adjacent cells too
+            // This is the "flood fill" algorithm that makes empty areas clear automatically
+            if (board[row][col].value === 0) {
+                // Check all 8 surrounding cells
+                for (let r = row - 1; r <= row + 1; r++) {
+                    for (let c = col - 1; c <= col + 1; c++) {
+                        // Skip the current cell
+                        if (r === row && c === col) continue;
 
-              {/* New game button */}
-              <button
-                onClick={startNewGame}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors"
-              >
-                {/* Show different emoji based on game status */}
-                {gameStatus === "playing" ? "😊 New Game" :
-                 gameStatus === "won" ? "😎 Play Again" : "😵 Try Again"}
-              </button>
+                        // Recursively reveal adjacent cells
+                        board = revealCell(board, r, c);
+                    }
+                }
+            }
 
-              {/* Timer */}
-              <div className="bg-gray-100 px-3 py-2 rounded">
-                <span className="font-bold">⏱️ {formatTime(timer)}</span>
-              </div>
+            return board;
+        }
+
+        // Function to check if the game is won
+        function checkWinCondition(board) {
+            // Game is won when all non-mine cells are revealed
+            for (let row = 0; row < GAME_CONFIG.rows; row++) {
+                for (let col = 0; col < GAME_CONFIG.cols; col++) {
+                    const cell = board[row][col];
+
+                    // If a non-mine cell is still hidden, game is not won yet
+                    if (cell.value !== -1 && !cell.isRevealed) {
+                        return false;
+                    }
+                }
+            }
+
+            // All non-mine cells are revealed, so the game is won!
+            return true;
+        }
+
+        // Format the timer display as MM:SS
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+
+            // Add leading zeros if needed
+            const formattedMinutes = String(minutes).padStart(2, '0');
+            const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+
+            return `${formattedMinutes}:${formattedSeconds}`;
+        }
+
+        // ========================================
+        // EFFECTS
+        // ========================================
+
+        // useEffect - React hook that lets us perform side effects
+        // Runs once when the component first mounts
+        React.useEffect(() => {
+            // Initialize the game board
+            const newBoard = createNewBoard();
+            setBoard(newBoard);
+
+            // Clean up function that runs when component unmounts
+            return () => {
+                // Clear the timer to prevent memory leaks
+                if (timerIntervalRef.current) {
+                    clearInterval(timerIntervalRef.current);
+                }
+            };
+        }, []);
+
+        // ========================================
+        // RENDER THE GAME
+        // ========================================
+
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen p-4">
+                <div className="bg-white rounded-lg shadow-lg p-6 max-w-md">
+                    {/* Game title */}
+                    <h1 className="text-3xl font-bold text-center mb-4 text-blue-600">Beginner Minesweeper</h1>
+
+                    {/* Game controls */}
+                    <div className="flex justify-between items-center mb-4">
+                        {/* Mine counter */}
+                        <div className="bg-gray-100 px-3 py-2 rounded">
+                            <span className="font-bold">🚩 {minesLeft}</span>
+                        </div>
+
+                        {/* New game button */}
+                        <button
+                            onClick={startNewGame}
+                            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors"
+                        >
+                            {/* Show different emoji based on game status */}
+                            {gameStatus === "playing" ? "😊 New Game" :
+                                gameStatus === "won" ? "😎 Play Again" : "😵 Try Again"}
+                        </button>
+
+                        {/* Timer */}
+                        <div className="bg-gray-100 px-3 py-2 rounded">
+                            <span className="font-bold">⏱️ {formatTime(timer)}</span>
+                        </div>
+                    </div>
+
+                    {/* Game board */}
+                    <div className="bg-gray-200 p-2 rounded">
+                        {/* Create the grid of cells */}
+                        <div
+                            className="grid gap-1"
+                            style={{ gridTemplateColumns: `repeat(${GAME_CONFIG.cols}, 40px)` }}
+                        >
+                            {/* Map through each row and column to create cells */}
+                            {board.map((row, rowIndex) => (
+                                // For each row, map through each column
+                                row.map((cell, colIndex) => (
+                                    // Create a Cell component for each position
+                                    <Cell
+                                        key={`${rowIndex}-${colIndex}`}
+                                        value={cell.value}
+                                        isRevealed={cell.isRevealed}
+                                        isFlagged={cell.isFlagged}
+                                        onClick={() => handleCellClick(rowIndex, colIndex)}
+                                        onRightClick={(e) => handleCellRightClick(rowIndex, colIndex, e)}
+                                    />
+                                ))
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Game status message - only shown when game is over */}
+                    {gameStatus !== "playing" && (
+                        <div className={`mt-4 p-3 rounded text-center font-bold ${
+                            gameStatus === "won" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                        }`}>
+                            {gameStatus === "won"
+                                ? "You won! Congratulations! 🎉"
+                                : "Game over! Better luck next time! 💣"}
+                        </div>
+                    )}
+
+                    {/* Game instructions */}
+                    <div className="mt-4 text-sm text-gray-600 bg-blue-50 p-3 rounded">
+                        <p className="font-bold mb-1">How to play:</p>
+                        <ul className="list-disc pl-5">
+                            <li>Left-click to reveal a cell</li>
+                            <li>Right-click to place/remove a flag</li>
+                            <li>Find all mines without revealing any to win!</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-
-            {/* Game board */}
-            <div className="bg-gray-200 p-2 rounded">
-              {/* Create the grid of cells */}
-              <div
-                className="grid gap-1"
-                style={{ gridTemplateColumns: `repeat(${GAME_CONFIG.cols}, 40px)` }}
-              >
-                {/* Map through each row and column to create cells */}
-                {board.map((row, rowIndex) => (
-                  // For each row, map through each column
-                  row.map((cell, colIndex) => (
-                    // Create a Cell component for each position
-                    <Cell
-                      key={`${rowIndex}-${colIndex}`}
-                      value={cell.value}
-                      isRevealed={cell.isRevealed}
-                      isFlagged={cell.isFlagged}
-                      onClick={() => handleCellClick(rowIndex, colIndex)}
-                      onRightClick={(e) => handleCellRightClick(rowIndex, colIndex, e)}
-                    />
-                  ))
-                ))}
-              </div>
-            </div>
-
-            {/* Game status message - only shown when game is over */}
-            {gameStatus !== "playing" && (
-              <div className={`mt-4 p-3 rounded text-center font-bold ${
-                gameStatus === "won" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-              }`}>
-                {gameStatus === "won"
-                  ? "You won! Congratulations! 🎉"
-                  : "Game over! Better luck next time! 💣"}
-              </div>
-            )}
-
-            {/* Game instructions */}
-            <div className="mt-4 text-sm text-gray-600 bg-blue-50 p-3 rounded">
-              <p className="font-bold mb-1">How to play:</p>
-              <ul className="list-disc pl-5">
-                <li>Left-click to reveal a cell</li>
-                <li>Right-click to place/remove a flag</li>
-                <li>Find all mines without revealing any to win!</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      );
+        );
     }
 
     // Mount React app to the DOM
     ReactDOM.render(<MinesweeperGame />, document.getElementById("root"));
-  </script>
+</script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9511076a1492da14',t:'MTc1MDE0NzM5MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
